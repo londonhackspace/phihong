@@ -9,7 +9,7 @@ class Port:
     self.state = state
 
 class Phihong:
-  def __init__(self, dev="/dev/ttyUSB0"):
+  def __init__(self, dev="/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0"):
     self.dev = dev
     # the windows version wants you to use
     # xon and xoff flow control, really?
@@ -223,6 +223,7 @@ class Phihong:
           # c1 3c 28 08 77 01 f8 00 2b 00 00 08
           # c1 3c 28 00 00 00 17 00 00 00 00 01
           # without:^
+#          print len(packet)
 #          hexdump(packet)
         else:
           pass
@@ -265,12 +266,15 @@ class Phihong:
         elif status == 1:
           status_s = "ready"
         if thing != 0 and status != 0:
-          print "port:", port, status_s, thing
+          print "port:", port, status_s, thing, hex(thing), tobin(thing)
 #        hexdump(packet)
       elif type == 4:
         packet = packet[:-2]
-#        hexdump(packet[:-2])
-        self.name = packet[-10:]    
+#        print "4: "
+#        hexdump(packet)
+        self.name = packet[-10:]
+      elif type == 0:
+        pass
       else:
         print "type:", type
         hexdump(packet[:-2])
@@ -315,12 +319,18 @@ if __name__ == "__main__":
   parser.add_argument('--save', action='store_true',
       help='Save current settings to flash')
 
+  parser.add_argument('--serialport', type=str, nargs=1, metavar=('<serial>'),
+      help='Which port to use')
+
   # name a port
   # name the device
 
   args = parser.parse_args()
-  
-  p = Phihong()
+
+  if args.serialport:
+    p = Phihong(args.serialport[0])
+  else:
+    p = Phihong()
   p.status()
   p.otherstatus()
 
