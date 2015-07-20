@@ -313,7 +313,7 @@ if __name__ == "__main__":
       help='name a port, max 10 letters')
 
   parser.add_argument('--save', action='store_true',
-      help='Save current settings top flash')
+      help='Save current settings to flash')
 
   # name a port
   # name the device
